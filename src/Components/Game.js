@@ -31,8 +31,21 @@ class Game extends Component {
         usedNumbers: [],
         randomNumberOfStars: Game.randomNumber(),
         answerIsCorrect: null,
-        redraws: 5,
+        redraws: 3,
         doneStatus: null,
+        giftClassColor: null,
+        difficultMode: false,
+    });
+
+    static difficultState = () => ({
+        selectedNumbers: [],
+        usedNumbers: [],
+        randomNumberOfStars: Game.randomNumber(),
+        answerIsCorrect: null,
+        redraws: 1,
+        doneStatus: null,
+        giftClassColor: null,
+        difficultMode: true,
     });
 
     state = Game.initialState();
@@ -93,11 +106,20 @@ class Game extends Component {
 
     updateDoneStatus = () => {
         this.setState(prevState => {
-            if (prevState.usedNumbers.length === 9) {
-                return { doneStatus: 'You Win, Good Job!'};
+            if (prevState.usedNumbers.length === 9 && this.state.difficultMode === false) {
+                return { 
+                    doneStatus: 'You Win! I have a small gift for you~ Good Job!',
+                    giftClassColor: 'gift-grey'
+                };
+            } 
+            if (prevState.usedNumbers.length === 9 && this.state.difficultMode === true) {
+                return { 
+                    doneStatus: 'Awesome Baby! Give me a kiss, I will show you second gift!!',
+                    giftClassColor: 'gift-green'
+                };
             } 
             if (prevState.redraws === 0 && !this.possibleSolution(prevState)) {
-                return {doneStatus: 'Game Over!'};
+                return {doneStatus: 'Game Over! No Gift~~~'};
             }
         });
     };
@@ -105,6 +127,12 @@ class Game extends Component {
     playAgain = () => {
         this.setState(
             Game.initialState()
+        );
+    };
+
+    playDifficult = () => {
+        this.setState(
+            Game.difficultState()
         );
     };
 
@@ -116,10 +144,16 @@ class Game extends Component {
             usedNumbers,
             redraws,
             doneStatus,
+            giftClassColor,
          } = this.state;
         return (
             <div className="container">
-                <h3>Play Nine</h3>
+                <h3 className="text-danger">Heart Game</h3>
+                <p><b>How to play:</b></p>
+                <p>1. Select number or numbers equal to hearts.</p>
+                <p>2. Click "=" button to check if answer is correct.</p>
+                <p>3. Click refresh button if you run out of choice.</p>
+                <p>4. Use all numbers to win the game!</p>
                 <hr />
                 <div className="row">
                     <Stars numberOfStars = {randomNumberOfStars} />
@@ -133,10 +167,14 @@ class Game extends Component {
                             unselectNumber = {this.unselectNumber} /> 
                 </div>
                 <br />
+                <hr />
+                <br />
                 {
                     doneStatus ?
                         <DoneFrame doneStatus = {doneStatus} 
-                                   playAgain = {this.playAgain}/> :
+                                   giftClassColor={giftClassColor}
+                                   playAgain = {this.playAgain}
+                                   playDifficult = {this.playDifficult} /> :
                         <Numbers selectedNumbers = {selectedNumbers}
                             selectNumber = {this.selectNumber}
                             usedNumbers = {usedNumbers} />

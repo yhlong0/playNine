@@ -30,3 +30,11 @@ span {
   color: #99bb99;
   cursor: not-allowed;
 }
+
+.gift-grey {
+  color: grey;
+}
+
+.gift-green {
+  color: #81d8d0;
+}
